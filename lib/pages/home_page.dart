@@ -27,6 +27,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final _controllerUpcoming = MovieController();
   int page = 1;
 
+  final String _urlPoster = 'https://image.tmdb.org/t/p/w780/';
+
   @override
   void initState() {
     super.initState();
@@ -97,194 +99,100 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: const Text("The Movie App"),
-        elevation: 0,
-        backgroundColor: Colors.black,
-      ),
+      appBar: _homeAppBar(),
       // Possibilita criar uma AppBar que esconde quando a tela é rolada
       body: Stack(
         children: <Widget>[
           SingleChildScrollView(
             child: Column(
               children: [
-                // Filtros de filmes e séries
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       //Filtro 1
-                //       Container(
-                //         color: Colors.orange,
-                //         width: 150,
-                //         height: 50,
-                //       ),
-                //       //Filtro 2
-                //       Container(
-                //         color: Colors.green,
-                //         width: 150,
-                //         height: 50,
-                //       ),
-                //       //Filtro 3
-                //       Container(
-                //         color: Colors.blue,
-                //         width: 150,
-                //         height: 50,
-                //       ),
-                //       //Filtro 4
-                //       Container(
-                //         color: Colors.yellow,
-                //         width: 150,
-                //         height: 50,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
                 const SizedBox(
                   height: 25,
                 ),
 
-                // Titulo Em Cartaz
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: SizedBox(
-                    child: const Text("Em Cartaz",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w800,
-                        )),
-                    height: 50,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
+                buildSectionTitle("Em Cartaz"),
+                buildCarouselMovieCard(),
 
-                // Cria o Carrosel de Em Cartaz
-                CarouselSlider.builder(
-                  itemCount: _controllerNowPlaying.moviesCount,
-                  itemBuilder: _buildNowPlayingMovieCard,
-                  options: CarouselOptions(
-                    height: 220,
-                    autoPlay: true,
-                    autoPlayInterval: const Duration(seconds: 4),
-                    enlargeCenterPage: true,
-                    enableInfiniteScroll: false,
-                    onPageChanged: (index, reason) =>
-                        setState(() => _currentIndex = index),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
+                const SizedBox(height: 30),
 
                 buildIndicator(),
 
-                const SizedBox(
-                  height: 30,
-                ),
+                const SizedBox(height: 30),
 
-                // Titulo Popular
-                Container(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: const Text(
-                    "Popular",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                ),
+                buildSectionTitle("Popular"),
+                buildListViewMovieCard(_controllerPopular), //
 
-                //
-                SizedBox(
-                  height: 200,
-                  width: 500,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(2.0),
-                    itemCount: _controllerPopular.moviesCount,
-                    itemBuilder: _buildPopularMovies,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: false,
-                  ),
-                ),
-                //
+                const SizedBox(height: 30),
 
-                const SizedBox(
-                  height: 30,
-                ),
+                buildSectionTitle("Melhores Avaliados"),
+                buildListViewMovieCard(_controllerTopRated),
 
-                // Titulo Em Cartaz
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: SizedBox(
-                    child: const Text(
-                      "Melhores Avaliados",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    height: 50,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
+                const SizedBox(height: 30),
 
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(2.0),
-                    itemCount: _controllerTopRated.moviesCount,
-                    itemBuilder: _buildTopRatedMovies,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: false,
-                  ),
-                ),
+                buildSectionTitle("Em Breve"),
+                buildListViewMovieCard(_controllerUpcoming),
 
-                const SizedBox(
-                  height: 30,
-                ),
-
-                // Titulo Em Cartaz
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: SizedBox(
-                    child: const Text(
-                      "Em Breve",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    height: 50,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-
-                SizedBox(
-                  height: 200,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(2.0),
-                    itemCount: _controllerUpcoming.moviesCount,
-                    itemBuilder: _buildUpcomingMovies,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: false,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 100,
-                ),
+                const SizedBox(height: 100),
               ],
             ),
           ),
-          _buildBottomNavigation(),
+          buildBottomNavigation(),
         ],
+      ),
+    );
+  }
+
+  _homeAppBar() {
+    return AppBar(
+      title: const Text("The Movie App"),
+      elevation: 0,
+      backgroundColor: Colors.black,
+    );
+  }
+
+  Widget buildCarouselMovieCard() {
+    return CarouselSlider.builder(
+      itemCount: _controllerNowPlaying.moviesCount,
+      itemBuilder: _buildNowPlayingMovieCard,
+      options: CarouselOptions(
+        height: 220,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 4),
+        enlargeCenterPage: true,
+        enableInfiniteScroll: false,
+        onPageChanged: (index, reason) => setState(() => _currentIndex = index),
+      ),
+    );
+  }
+
+  Widget buildListViewMovieCard(MovieController _mc) {
+    return SizedBox(
+      height: 200,
+      width: 500,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(2.0),
+        itemCount: _mc.moviesCount,
+        itemBuilder: (context, index) => _itemBuilder(context, index, _mc),
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: false,
+      ),
+    );
+  }
+
+  Widget buildSectionTitle(String titleSection) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15.0),
+      child: SizedBox(
+        child: Text(
+          titleSection,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        height: 50,
+        width: MediaQuery.of(context).size.width,
       ),
     );
   }
@@ -294,6 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14.0),
+        // Permite adicionar um indicador de progresso enquanto a imagem é carregada
         child: CachedNetworkImage(
           height: 220,
           width: 140,
@@ -323,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildBottomNavigation() {
+  Widget buildBottomNavigation() {
     return Align(
       alignment: FractionalOffset.bottomCenter,
       //this is very important, without it the whole screen will be blurred
@@ -388,40 +297,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Widget _buildPopularMovieCard(_, index) {
-  //   final movie = _controllerPopular.movies[index];
-  //   return MovieCardPopular(
-  //       posterPath: movie.backdropPath,
-  //       title: movie.title,
-  //       rate: movie.voteAverage,
-  //       onTap: () {} //() => _openDetailPage(movie.id),
-  //       );
-  // }
-
-  Widget _buildPopularMovies(_, index) {
-    final movie = _controllerPopular.movies[index];
+  Widget _itemBuilder(BuildContext context, int index, MovieController _movie) {
+    final movie = _movie.movies[index];
     final posterPath = movie.posterPath;
-    final urlPoster = 'https://image.tmdb.org/t/p/w780/$posterPath';
-    return GestureDetector(
-      child: buildImage(urlPoster, index),
-      onTap: () => _openDetailPage(movie.id),
-    );
-  }
-
-  Widget _buildTopRatedMovies(_, index) {
-    final movie = _controllerTopRated.movies[index];
-    final posterPath = movie.posterPath;
-    final urlPoster = 'https://image.tmdb.org/t/p/w780/$posterPath';
-    return GestureDetector(
-      child: buildImage(urlPoster, index),
-      onTap: () => _openDetailPage(movie.id),
-    );
-  }
-
-  Widget _buildUpcomingMovies(_, index) {
-    final movie = _controllerUpcoming.movies[index];
-    final posterPath = movie.posterPath;
-    final urlPoster = 'https://image.tmdb.org/t/p/w780/$posterPath';
+    final urlPoster = '$_urlPoster$posterPath';
     return GestureDetector(
       child: buildImage(urlPoster, index),
       onTap: () => _openDetailPage(movie.id),

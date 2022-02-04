@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: "The Movie App"),
+      home: const MyHomePage(title: "The Movie App"),
     );
   }
 }
