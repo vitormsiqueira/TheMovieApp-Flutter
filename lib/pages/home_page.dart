@@ -8,6 +8,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/pages/details_movie_page.dart';
+import 'package:the_movie_app/utils/open_detail_page.dart';
+import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:the_movie_app/widgets/movie_card_now_playing.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -42,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await _controllerNowPlaying.fetchMovies(
-        page: page, classMovie: 'now_playing');
+        page: page, classMovie: 'now_playing', similar: false, idMovie: 0);
 
     setState(() {
       _controllerNowPlaying.loading = false;
@@ -54,7 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _controllerPopular.loading = true;
     });
 
-    await _controllerPopular.fetchMovies(page: page, classMovie: 'popular');
+    await _controllerPopular.fetchMovies(
+        page: page, classMovie: 'popular', idMovie: 0, similar: false);
 
     setState(() {
       _controllerPopular.loading = false;
@@ -66,7 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _controllerTopRated.loading = true;
     });
 
-    await _controllerTopRated.fetchMovies(page: page, classMovie: 'top_rated');
+    await _controllerTopRated.fetchMovies(
+        page: page, classMovie: 'top_rated', idMovie: 0, similar: false);
 
     setState(() {
       _controllerTopRated.loading = false;
@@ -78,7 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _controllerUpcoming.loading = true;
     });
 
-    await _controllerUpcoming.fetchMovies(page: page, classMovie: 'upcoming');
+    await _controllerUpcoming.fetchMovies(
+        page: page, classMovie: 'upcoming', idMovie: 0, similar: false);
 
     setState(() {
       _controllerUpcoming.loading = false;
@@ -195,29 +200,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget buildImage(String urlImage, int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14.0),
-        // Permite adicionar um indicador de progresso enquanto a imagem é carregada
-        child: CachedNetworkImage(
-          height: 220,
-          width: 140,
-          placeholder: (context, url) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            );
-          },
-          imageUrl: urlImage,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
   Widget buildIndicator() {
     return AnimatedSmoothIndicator(
       activeIndex: _currentIndex,
@@ -291,26 +273,17 @@ class _MyHomePageState extends State<MyHomePage> {
       posterPath: movie.backdropPath,
       title: movie.title,
       rate: movie.voteAverage,
-      onTap: () => _openDetailPage(movie.id),
+      onTap: () => openDetailPage(movie.id, context),
     );
   }
 
-  Widget _itemBuilder(BuildContext context, int index, MovieController _movie) {
+  Widget _itemBuilder(_, int index, MovieController _movie) {
     final movie = _movie.movies[index];
     final posterPath = movie.posterPath;
     final urlPoster = '$urlPoster780$posterPath';
     return GestureDetector(
-      child: buildImage(urlPoster, index),
-      onTap: () => _openDetailPage(movie.id),
-    );
-  }
-
-  _openDetailPage(movieId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MovieDetailPage(movieId),
-      ),
+      child: buildImagePoster(urlPoster, index),
+      onTap: () => openDetailPage(movie.id, context),
     );
   }
 }

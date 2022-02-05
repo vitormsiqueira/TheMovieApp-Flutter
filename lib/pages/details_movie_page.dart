@@ -5,9 +5,13 @@ import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_app/controllers/movie_cast_controller.dart';
+import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/controllers/movie_detail_controller.dart';
+import 'package:the_movie_app/controllers/movie_similar_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
+import 'package:the_movie_app/utils/open_detail_page.dart';
+import 'package:the_movie_app/widgets/build_image_poster.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
@@ -21,12 +25,14 @@ class MovieDetailPage extends StatefulWidget {
 class _MovieDetailPageState extends State<MovieDetailPage> {
   final _controllerDetail = MovieDetailController();
   final _controllerCast = MovieCastController();
+  final _controllerSimilar = MovieController();
 
   @override
   void initState() {
     super.initState();
     _initializeDetail();
     _initializeCast();
+    _initializeSimilar();
   }
 
   _initializeDetail() async {
@@ -53,6 +59,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     });
   }
 
+  _initializeSimilar() async {
+    setState(() {
+      _controllerSimilar.loading = true;
+    });
+
+    await _controllerSimilar.fetchMovies(
+        idMovie: widget.movieId, similar: true, classMovie: "");
+
+    setState(() {
+      _controllerSimilar.loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,10 +91,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
       );
     }
-
-    // if (_controllerDetail.movieError != null) {
-    //   return CenteredMessage(message: _controllerDetail.movieError.message);
-    // }
 
     return Container(
       color: Colors.black,
@@ -102,7 +117,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     children: [
                       _buildOverview(),
                       _buildCast(),
-                      _buildRelated(),
+                      _buildSimilar(),
                     ],
                   ),
                 ),
@@ -155,12 +170,38 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  _buildRelated() {
-    return Padding(
+  _buildSimilar() {
+    return Container(
       padding: const EdgeInsets.all(20.0),
-      child: Row(
-        children: [_buildSectionTitle("Recomendados")],
+      child: Column(
+        children: [
+          _buildSectionTitle("Similar"),
+          SingleChildScrollView(
+            child: SizedBox(
+              height: 250,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(5.0),
+                itemCount: _controllerSimilar.moviesCount,
+                // itemCount: _controllerSimilar.moviesCount,
+                itemBuilder: _builSimilarMovie,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+              ),
+            ),
+          )
+        ],
       ),
+    );
+  }
+
+  Widget _builSimilarMovie(_, index) {
+    final similar = _controllerSimilar.movies[index];
+    final similarPath = similar.posterPath;
+    final urlPoster = '$urlPoster400$similarPath';
+    final pathImage = similarPath == null ? urlAlternative : urlPoster;
+    return GestureDetector(
+      child: buildImagePoster(pathImage, index),
+      onTap: () => openDetailPage(similar.id, context),
     );
   }
 
@@ -281,7 +322,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         fit: BoxFit.cover,
         imageUrl:
-            'https://image.tmdb.org/t/p/original${_controllerDetail.movieDetail?.backdropPath}',
+            '$urlPosterOriginal${_controllerDetail.movieDetail?.backdropPath}',
       ),
     );
   }
