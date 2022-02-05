@@ -6,7 +6,7 @@ import '../models/movie_model.dart';
 import '../models/movie_response_model.dart';
 
 class MovieController {
-  final _repository = MovieRepository();
+  final _repository = Repository();
 
   MovieResponseModel? movieResponseModel;
   MovieError? movieError;

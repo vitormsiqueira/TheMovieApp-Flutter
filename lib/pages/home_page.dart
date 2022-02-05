@@ -8,7 +8,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/pages/details_movie_page.dart';
-import 'package:the_movie_app/utils/open_detail_page.dart';
+import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:the_movie_app/widgets/movie_card_now_playing.dart';
 
@@ -282,7 +282,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final posterPath = movie.posterPath;
     final urlPoster = '$urlPoster780$posterPath';
     return GestureDetector(
-      child: buildImagePoster(urlPoster, index),
+      child: buildImagePoster(urlPoster),
       onTap: () => openDetailPage(movie.id, context),
     );
   }

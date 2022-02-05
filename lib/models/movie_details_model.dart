@@ -66,7 +66,7 @@ class MovieDetail {
   factory MovieDetail.fromMap(Map<String, dynamic> json) => MovieDetail(
         adult: json["adult"],
         backdropPath: json["backdrop_path"],
-        // Ta retornando
+        // Ta retornando erro
         // belongsToCollection:
         //     BelongsToCollection.fromMap(json["belongs_to_collection"]),
         budget: json["budget"],
@@ -115,8 +115,6 @@ class BelongsToCollection {
   factory BelongsToCollection.fromJson(String str) =>
       BelongsToCollection.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory BelongsToCollection.fromMap(Map<String, dynamic> json) =>
       BelongsToCollection(
         id: json["id"],
@@ -124,11 +122,4 @@ class BelongsToCollection {
         posterPath: json["poster_path"],
         backdropPath: json["backdrop_path"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
-        "poster_path": posterPath,
-        "backdrop_path": backdropPath,
-      };
 }

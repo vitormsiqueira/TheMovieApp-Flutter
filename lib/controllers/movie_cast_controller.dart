@@ -6,7 +6,7 @@ import 'package:the_movie_app/models/movie_model.dart';
 import 'package:the_movie_app/repositories/movies_repository.dart';
 
 class MovieCastController {
-  final _repository = MovieRepository();
+  final _repository = Repository();
 
   MovieCastResponseModel? movieCastResponseModel;
   MovieError? movieError;

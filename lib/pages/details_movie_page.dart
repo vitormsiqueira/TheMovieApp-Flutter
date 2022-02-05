@@ -1,16 +1,14 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_app/controllers/movie_cast_controller.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/controllers/movie_detail_controller.dart';
-import 'package:the_movie_app/controllers/movie_similar_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
-import 'package:the_movie_app/utils/open_detail_page.dart';
+import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 
 class MovieDetailPage extends StatefulWidget {
@@ -75,11 +73,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildMovieDetail(),
+      body: _buildBodyMovieDetail(),
     );
   }
 
-  _buildMovieDetail() {
+  _buildBodyMovieDetail() {
     if (_controllerDetail.loading) {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -117,7 +115,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     children: [
                       _buildOverview(),
                       _buildCast(),
+                      const SizedBox(height: 10),
                       _buildSimilar(),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -171,26 +171,31 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   _buildSimilar() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          _buildSectionTitle("Similar"),
-          SingleChildScrollView(
-            child: SizedBox(
-              height: 250,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(5.0),
-                itemCount: _controllerSimilar.moviesCount,
-                // itemCount: _controllerSimilar.moviesCount,
-                itemBuilder: _builSimilarMovie,
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
+          child: Row(
+            children: [
+              _buildSectionTitle("Similar"),
+            ],
+          ),
+        ),
+        SingleChildScrollView(
+          child: SizedBox(
+            height: 250,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(5.0),
+              itemCount: _controllerSimilar.moviesCount,
+              // itemCount: _controllerSimilar.moviesCount,
+              itemBuilder: _builSimilarMovie,
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
@@ -200,7 +205,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     final urlPoster = '$urlPoster400$similarPath';
     final pathImage = similarPath == null ? urlAlternative : urlPoster;
     return GestureDetector(
-      child: buildImagePoster(pathImage, index),
+      child: buildImagePoster(pathImage),
       onTap: () => openDetailPage(similar.id, context),
     );
   }
@@ -243,8 +248,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     final pathImage = castPath == null ? urlAlternative : urlPoster;
     return GestureDetector(
         child: buildImage(pathImage, index, '$castName', '$castCharacter'),
-        onTap: () {} //() => _openDetailPage(movie.id),
-        );
+        onTap: () => openPersonPage(cast.id, context));
   }
 
   Widget buildImage(
