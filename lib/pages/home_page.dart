@@ -6,9 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
+import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/pages/details_movie_page.dart';
 import 'package:the_movie_app/widgets/movie_card_now_playing.dart';
-import 'package:the_movie_app/widgets/movie_card_popular.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -26,8 +26,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final _controllerTopRated = MovieController();
   final _controllerUpcoming = MovieController();
   int page = 1;
-
-  final String _urlPoster = 'https://image.tmdb.org/t/p/w780/';
 
   @override
   void initState() {
@@ -300,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _itemBuilder(BuildContext context, int index, MovieController _movie) {
     final movie = _movie.movies[index];
     final posterPath = movie.posterPath;
-    final urlPoster = '$_urlPoster$posterPath';
+    final urlPoster = '$urlPoster780$posterPath';
     return GestureDetector(
       child: buildImage(urlPoster, index),
       onTap: () => _openDetailPage(movie.id),

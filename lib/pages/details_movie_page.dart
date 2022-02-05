@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:the_movie_app/controllers/movie_cast_controller.dart';
 import 'package:the_movie_app/controllers/movie_detail_controller.dart';
+import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
 
 class MovieDetailPage extends StatefulWidget {
@@ -117,17 +118,19 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
-        children: const [
-          Text(
-            "Titulos Similares",
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+        children: [_buildSectionTitle("Recomendados")],
+      ),
+    );
+  }
+
+  _buildSectionTitle(String txt) {
+    return Text(
+      txt,
+      textAlign: TextAlign.start,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 18.0,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
@@ -141,17 +144,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Text(
-                "Sinopse",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+            children: [_buildSectionTitle("Sinopse")],
           ),
           const SizedBox(
             height: 10,
@@ -181,17 +174,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         Padding(
           padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
           child: Row(
-            children: const [
-              Text(
-                "Elenco",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+            children: [_buildSectionTitle("Elenco")],
           ),
         ),
         SingleChildScrollView(
@@ -215,10 +198,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     final castPath = cast.profilePath;
     final castName = cast.name;
     final castCharacter = cast.character;
-    final urlPoster = 'https://image.tmdb.org/t/p/w400$castPath';
-    final pathImage = castPath == null
-        ? 'https://saltadorarchitects.com/images/team/01.jpg'
-        : urlPoster;
+    final urlPoster = '$urlPoster400$castPath';
+    final pathImage = castPath == null ? urlAlternative : urlPoster;
     return GestureDetector(
         child: buildImage(pathImage, index, '$castName', '$castCharacter'),
         onTap: () {} //() => _openDetailPage(movie.id),
@@ -316,7 +297,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       child: Column(
         children: [
           Text(
-            movieTitle ?? '',
+            movieTitle ?? 'Sem Título',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
