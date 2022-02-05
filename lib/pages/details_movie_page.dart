@@ -102,7 +102,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     children: [
                       _buildOverview(),
                       _buildCast(),
-                      _buildSimilar(),
+                      _buildRelated(),
                     ],
                   ),
                 ),
@@ -110,15 +110,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  _buildSimilar() {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Row(
-        children: [_buildSectionTitle("Recomendados")],
       ),
     );
   }
@@ -160,6 +151,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _buildRelated() {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Row(
+        children: [_buildSectionTitle("Recomendados")],
       ),
     );
   }

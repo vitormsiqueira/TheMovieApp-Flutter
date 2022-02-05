@@ -36,8 +36,6 @@ class MovieCastModel {
   factory MovieCastModel.fromJson(String str) =>
       MovieCastModel.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory MovieCastModel.fromMap(Map<String, dynamic> json) => MovieCastModel(
         adult: json["adult"],
         gender: json["gender"],
@@ -54,21 +52,4 @@ class MovieCastModel {
         department: json["department"] == null ? null : json["department"],
         job: json["job"] == null ? null : json["job"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "adult": adult,
-        "gender": gender,
-        "id": id,
-        "known_for_department": knownForDepartment,
-        "name": name,
-        "original_name": originalName,
-        "popularity": popularity,
-        "profile_path": profilePath == null ? null : profilePath,
-        "cast_id": castId == null ? null : castId,
-        "character": character == null ? null : character,
-        "credit_id": creditId,
-        "order": order == null ? null : order,
-        "department": department == null ? null : department,
-        "job": job == null ? null : job,
-      };
 }

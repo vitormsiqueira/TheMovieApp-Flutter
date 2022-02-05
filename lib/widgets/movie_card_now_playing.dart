@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:the_movie_app/core/constants.dart';
 
 class MovieCardNowPlaying extends StatelessWidget {
   final String? posterPath;
@@ -34,7 +35,7 @@ class MovieCardNowPlaying extends StatelessWidget {
                     ),
                   );
                 },
-                imageUrl: 'https://image.tmdb.org/t/p/w780/$posterPath',
+                imageUrl: '$urlPoster780$posterPath',
                 fit: BoxFit.cover,
               ),
             ),
