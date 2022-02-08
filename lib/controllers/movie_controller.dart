@@ -19,13 +19,14 @@ class MovieController {
   int get currentPage => movieResponseModel!.page ?? 1;
 
   Future<Either<MovieError, MovieResponseModel>> fetchMovies(
-      {int page = 1,
-      required int idMovie,
-      required String classMovie,
-      required bool similar}) async {
+      {int idMovie = 0,
+      String classMovie = '',
+      int idPerson = 0,
+      int responseType = 0,
+      int page = 1}) async {
     movieError;
-    final result =
-        await _repository.fetchMovies(page, idMovie, classMovie, similar);
+    final result = await _repository.fetchMovies(
+        page, idMovie, classMovie, idPerson, responseType);
     result.fold(
       (error) => movieError = error,
       (movie) {

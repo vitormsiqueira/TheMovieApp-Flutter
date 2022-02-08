@@ -10,14 +10,18 @@ import 'package:the_movie_app/models/person_model.dart';
 class Repository {
   final Dio _dio = Dio(kDioOptions);
 
-  Future<Either<MovieError, MovieResponseModel>> fetchMovies(
-      int page, int idMovie, String classMovie, bool similar) async {
-    String path = similar == false
-        ? '/movie/$classMovie?&language=pt-BR&page=$page'
-        : '/movie/$idMovie/similar?&language=pt-BR&page=1';
+  Future<Either<MovieError, MovieResponseModel>> fetchMovies(int page,
+      int idMovie, String classMovie, int idPerson, int responseType) async {
+    List<String> path = [
+      '/movie/$classMovie?&language=pt-BR&page=$page',
+      '/movie/$idMovie/similar?&language=pt-BR&page=1',
+    ];
+    print('responseeeee');
+    print(path[responseType]);
     try {
-      final response = await _dio.get(path);
+      final response = await _dio.get(path[responseType]);
       final model = MovieResponseModel.fromMap(response.data);
+      print(model);
       return Right(model);
     } on DioError catch (error) {
       if (error.response != null) {

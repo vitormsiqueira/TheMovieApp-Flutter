@@ -10,6 +10,8 @@ import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
 import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
+import 'package:blur/blur.dart';
+import 'package:the_movie_app/widgets/section_title.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
@@ -63,7 +65,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     });
 
     await _controllerSimilar.fetchMovies(
-        idMovie: widget.movieId, similar: true, classMovie: "");
+        idMovie: widget.movieId, responseType: 1);
 
     setState(() {
       _controllerSimilar.loading = false;
@@ -91,7 +93,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     }
 
     return Container(
-      color: Colors.black,
+      color: mainColor,
       width: MediaQuery.of(context).size.width,
       child: Stack(
         alignment: Alignment.topCenter,
@@ -110,12 +112,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   ],
                 ),
                 Container(
-                  color: Colors.black,
+                  color: mainColor,
                   child: Column(
                     children: [
                       _buildOverview(),
                       _buildCast(),
                       const SizedBox(height: 10),
+                      // _buildVideos(),
+                      // const SizedBox(height: 10),
                       _buildSimilar(),
                       const SizedBox(height: 10),
                     ],
@@ -129,28 +133,20 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  _buildSectionTitle(String txt) {
-    return Text(
-      txt,
-      textAlign: TextAlign.start,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 18.0,
-        fontWeight: FontWeight.w500,
-      ),
-    );
+  _buildVideos() {
+    return Container();
   }
 
   _buildOverview() {
     String? movieOverview = _controllerDetail.movieDetail?.overview;
     return Container(
-      color: Colors.black,
+      color: mainColor,
       padding: const EdgeInsets.all(20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
-            children: [_buildSectionTitle("Sinopse")],
+            children: [buildSectionTitle("Sinopse")],
           ),
           const SizedBox(
             height: 10,
@@ -178,7 +174,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
           child: Row(
             children: [
-              _buildSectionTitle("Similar"),
+              buildSectionTitle("Similar"),
             ],
           ),
         ),
@@ -188,7 +184,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             child: ListView.builder(
               padding: const EdgeInsets.all(5.0),
               itemCount: _controllerSimilar.moviesCount,
-              // itemCount: _controllerSimilar.moviesCount,
               itemBuilder: _builSimilarMovie,
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -220,12 +215,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         Padding(
           padding: const EdgeInsets.only(left: 20.0, bottom: 10.0),
           child: Row(
-            children: [_buildSectionTitle("Elenco")],
+            children: [buildSectionTitle("Elenco")],
           ),
         ),
         SingleChildScrollView(
           child: SizedBox(
-            height: 200,
+            height: 160,
             child: ListView.builder(
               padding: const EdgeInsets.all(5.0),
               itemCount: _controllerCast.castCount,
@@ -256,11 +251,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     return Column(
       children: [
         Container(
-          height: 120,
+          height: 80,
           width: 80,
           margin: const EdgeInsets.symmetric(horizontal: 7),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(50),
             child: CachedNetworkImage(
               placeholder: (context, url) => const SizedBox(
                 width: 60,
@@ -316,6 +311,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   _buildCover() {
+    String? posterPath = _controllerDetail.movieDetail?.backdropPath;
     return SizedBox(
       height: 420,
       child: CachedNetworkImage(
@@ -325,8 +321,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
         ),
         fit: BoxFit.cover,
-        imageUrl:
-            '$urlPosterOriginal${_controllerDetail.movieDetail?.backdropPath}',
+        imageUrl: '$urlPosterOriginal$posterPath',
       ),
     );
   }
@@ -336,60 +331,92 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     int? movieYear = _controllerDetail.movieDetail?.releaseDate?.year;
     List<Genre>? movieGenre = _controllerDetail.movieDetail?.genres;
     int? movieRuntime = _controllerDetail.movieDetail?.runtime;
+    double? movieRate = _controllerDetail.movieDetail?.voteAverage;
+    String moviePoster = _controllerDetail.movieDetail?.posterPath ?? '';
+    double posterWidth = 140;
+    double posterHeight = 200;
+    double titleWidth = MediaQuery.of(context).size.width - posterWidth - 40;
 
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            movieTitle ?? 'Sem Título',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32.0,
-              fontWeight: FontWeight.w800,
+          SizedBox(
+            width: posterWidth,
+            child: buildImagePoster(
+              '$urlPoster400$moviePoster',
+              margin: 0,
+              altura: posterHeight,
+              larg: posterWidth,
+              border: 8,
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '$movieYear',
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 12.0,
+          Container(
+            width: titleWidth,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  movieTitle ?? 'Sem Título',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-              const Text(
-                ' • ',
-                style: TextStyle(color: Colors.white),
-              ),
-              Text(
-                '$movieRuntime min',
-                style: const TextStyle(
-                  color: Colors.white60,
-                  fontSize: 12.0,
+                const SizedBox(
+                  height: 5,
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (int i = 0; i < 5; i++)
-                const Icon(
-                  Icons.star_rounded,
-                  color: Colors.yellow,
-                  size: 18.0,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$movieYear',
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    const Text(
+                      ' • ',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Text(
+                      '$movieRuntime min',
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          )
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$movieRate',
+                      style: const TextStyle(
+                        color: Colors.yellow,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.star_rounded,
+                      color: Colors.yellow,
+                      size: 18.0,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -398,17 +425,17 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   _transitionShadow() {
     return Container(
       height: 400,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.black,
+            mainColor,
             Colors.transparent,
             Colors.transparent,
-            Colors.black
+            mainColor
           ],
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          stops: [0.1, 2, 0, 0],
+          stops: [0.25, 1, 0, 0],
         ),
       ),
     );

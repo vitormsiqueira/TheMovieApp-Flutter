@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:the_movie_app/core/constants.dart';
 
-class MovieCardNowPlaying extends StatelessWidget {
+class MovieCardNowPlaying extends StatefulWidget {
   final String? posterPath;
   final String? title;
   final double? rate;
@@ -17,27 +18,56 @@ class MovieCardNowPlaying extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<MovieCardNowPlaying> createState() => _MovieCardNowPlayingState();
+}
+
+class _MovieCardNowPlayingState extends State<MovieCardNowPlaying> {
+  PaletteColor? myColor;
+
+  void initiState() {
+    super.initState();
+    myColor = PaletteColor(Colors.green, 2);
+    _updatePalettes();
+  }
+
+  _updatePalettes() async {
+    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
+      NetworkImage(widget.posterPath ?? urlAlternative),
+    );
+
+    myColor = (generator.dominantColor ?? PaletteColor(Colors.red, 2));
+
+    // print('color');
+    // print(myColor);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // print('color');
+    // print(myColor);
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Stack(
         alignment: AlignmentDirectional.bottomStart,
         children: [
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14.0),
-              child: CachedNetworkImage(
-                height: 220,
-                placeholder: (context, url) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  );
-                },
-                imageUrl: '$urlPoster780$posterPath',
-                fit: BoxFit.cover,
-              ),
+              child: widget.posterPath != null
+                  ? CachedNetworkImage(
+                      height: 220,
+                      placeholder: (context, _) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white60,
+                          ),
+                        );
+                      },
+                      imageUrl: '$urlPoster780${widget.posterPath}',
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset('lib/assets/images/backdrop_alternative.png'),
             ),
           ),
           Column(
@@ -47,7 +77,7 @@ class MovieCardNowPlaying extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
                 child: Text(
-                  '$title',
+                  '${widget.title}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18.0,
@@ -81,7 +111,7 @@ class MovieCardNowPlaying extends StatelessWidget {
                       size: 15.0,
                     ),
                     Text(
-                      '$rate',
+                      '${widget.rate}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12.0,

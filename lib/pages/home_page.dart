@@ -1,13 +1,11 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
-import 'package:the_movie_app/pages/details_movie_page.dart';
 import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:the_movie_app/widgets/movie_card_now_playing.dart';
@@ -44,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await _controllerNowPlaying.fetchMovies(
-        page: page, classMovie: 'now_playing', similar: false, idMovie: 0);
+        page: page, classMovie: 'now_playing', responseType: 0);
 
     setState(() {
       _controllerNowPlaying.loading = false;
@@ -57,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await _controllerPopular.fetchMovies(
-        page: page, classMovie: 'popular', idMovie: 0, similar: false);
+        page: page, classMovie: 'popular', idMovie: 0, responseType: 0);
 
     setState(() {
       _controllerPopular.loading = false;
@@ -70,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await _controllerTopRated.fetchMovies(
-        page: page, classMovie: 'top_rated', idMovie: 0, similar: false);
+        page: page, classMovie: 'top_rated', responseType: 0);
 
     setState(() {
       _controllerTopRated.loading = false;
@@ -83,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     await _controllerUpcoming.fetchMovies(
-        page: page, classMovie: 'upcoming', idMovie: 0, similar: false);
+        page: page, classMovie: 'upcoming', idMovie: 0, responseType: 0);
 
     setState(() {
       _controllerUpcoming.loading = false;
@@ -101,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: mainColor,
       appBar: _homeAppBar(),
       // Possibilita criar uma AppBar que esconde quando a tela é rolada
       body: Stack(
@@ -149,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return AppBar(
       title: const Text("The Movie App"),
       elevation: 0,
-      backgroundColor: Colors.black,
+      backgroundColor: mainColor,
     );
   }
 
@@ -239,12 +237,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 type: BottomNavigationBarType.fixed,
                 unselectedItemColor: Colors.white,
-                selectedItemColor: Colors.red,
-                backgroundColor: Colors.black,
+                selectedItemColor: Colors.white,
+                selectedFontSize: 12,
+                unselectedFontSize: 12,
+                backgroundColor: secondColor,
                 items: const [
                   BottomNavigationBarItem(
                     icon: Icon(Icons.home),
-                    label: "Home",
+                    label: "Inicio",
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.search_rounded),
