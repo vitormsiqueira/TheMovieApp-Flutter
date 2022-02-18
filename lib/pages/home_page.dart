@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildListViewMovieCard(MovieController _mc) {
     return SizedBox(
-      height: 200,
+      height: 230,
       width: 500,
       child: ListView.builder(
         padding: const EdgeInsets.all(2.0),
