@@ -5,6 +5,7 @@ import 'package:the_movie_app/errors/movie_error.dart';
 import 'package:the_movie_app/models/movie_cast_response_model.dart';
 import 'package:the_movie_app/models/movie_details_model.dart';
 import 'package:the_movie_app/models/movie_response_model.dart';
+import 'package:the_movie_app/models/movie_video_response.dart';
 import 'package:the_movie_app/models/person_model.dart';
 
 class Repository {
@@ -16,12 +17,9 @@ class Repository {
       '/movie/$classMovie?&language=pt-BR&page=$page',
       '/movie/$idMovie/similar?&language=pt-BR&page=1',
     ];
-    print('responseeeee');
-    print(path[responseType]);
     try {
       final response = await _dio.get(path[responseType]);
       final model = MovieResponseModel.fromMap(response.data);
-      print(model);
       return Right(model);
     } on DioError catch (error) {
       if (error.response != null) {
@@ -35,23 +33,28 @@ class Repository {
     }
   }
 
-  // Future<Either<MovieError, MovieSimilarResponseModel>> fetchSimilarMovies(
-  //     int page, int id) async {
-  //   try {
-  //     final response = await _dio.get();
-  //     final model = MovieSimilarResponseModel.fromMap(response.data);
-  //     return Right(model);
-  //   } on DioError catch (error) {
-  //     if (error.response != null) {
-  //       return Left(
-  //           MovieRepositoryError(error.response!.data['status_message']));
-  //     } else {
-  //       return Left(MovieRepositoryError(kServerError));
-  //     }
-  //   } on Exception catch (error) {
-  //     return Left(MovieRepositoryError(error.toString()));
-  //   }
-  // }
+  Future<Either<MovieError, MovieVideoResponse>> fetchVideos(
+      int idMovie) async {
+    try {
+      final response = await _dio.get('/movie/$idMovie/videos?&language=pt-BR');
+      // print('/movie/$idMovie/videos?&language=pt-BR');
+      final model = MovieVideoResponse.fromMap(response.data);
+      // print('results:');
+      // print(model.results![0].key);
+      // print(model.results![1].key);
+      // print(model.results![2].key);
+      return Right(model);
+    } on DioError catch (error) {
+      if (error.response != null) {
+        return Left(
+            MovieRepositoryError(error.response!.data['status_message']));
+      } else {
+        return Left(MovieRepositoryError(kServerError));
+      }
+    } on Exception catch (error) {
+      return Left(MovieRepositoryError(error.toString()));
+    }
+  }
 
   Future<Either<MovieError, MovieCastResponseModel>> fetchCastMovieById(
       int id) async {

@@ -226,7 +226,6 @@ class _MyHomePageState extends State<MyHomePage> {
               sigmaY: 10.0,
             ),
             child: Opacity(
-              //you can change the opacity to whatever suits you best
               opacity: 0.6,
               child: BottomNavigationBar(
                 currentIndex: 0,

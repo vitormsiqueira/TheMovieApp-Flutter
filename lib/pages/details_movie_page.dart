@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:the_movie_app/controllers/movie_cast_controller.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/controllers/movie_detail_controller.dart';
+import 'package:the_movie_app/controllers/movie_video_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
 import 'package:the_movie_app/utils/open_page.dart';
@@ -26,6 +27,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   final _controllerDetail = MovieDetailController();
   final _controllerCast = MovieCastController();
   final _controllerSimilar = MovieController();
+  final _controllerVideo = MovieVideoController();
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     _initializeDetail();
     _initializeCast();
     _initializeSimilar();
+    _initializeVideo();
   }
 
   _initializeDetail() async {
@@ -69,6 +72,18 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
     setState(() {
       _controllerSimilar.loading = false;
+    });
+  }
+
+  _initializeVideo() async {
+    setState(() {
+      _controllerVideo.loading = true;
+    });
+
+    await _controllerVideo.fetchVideos(idMovie: widget.movieId);
+
+    setState(() {
+      _controllerVideo.loading = false;
     });
   }
 
@@ -118,8 +133,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       _buildOverview(),
                       _buildCast(),
                       const SizedBox(height: 10),
-                      // _buildVideos(),
-                      // const SizedBox(height: 10),
+                      _buildVideos(),
+                      const SizedBox(height: 20),
                       _buildSimilar(),
                       const SizedBox(height: 10),
                     ],
@@ -134,7 +149,40 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   _buildVideos() {
-    return Container();
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [buildSectionTitle("Videos")],
+            ),
+          ),
+          SizedBox(
+            height: 200,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _controllerVideo.videosCount,
+              itemBuilder: _videoBuilder,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Precisa tratar o erro quando nao encontra o video pela key
+  Widget _videoBuilder(_, int index) {
+    final videosResult = _controllerVideo.videos[index];
+    final videoKey = videosResult.key;
+    String videoThumb = 'https://i.ytimg.com/vi/$videoKey/mqdefault.jpg';
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        child: buildImagePoster(videoThumb, larg: 320),
+      ),
+    );
   }
 
   _buildOverview() {

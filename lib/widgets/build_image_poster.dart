@@ -16,6 +16,7 @@ Widget buildImagePoster(String urlImage,
       child: CachedNetworkImage(
         height: altura,
         width: larg,
+        imageUrl: urlImage,
         placeholder: (context, url) {
           return const Center(
             child: CircularProgressIndicator(
@@ -23,7 +24,7 @@ Widget buildImagePoster(String urlImage,
             ),
           );
         },
-        imageUrl: urlImage,
+        errorWidget: (context, url, error) => const Icon(Icons.error),
         fit: BoxFit.cover,
       ),
     ),
