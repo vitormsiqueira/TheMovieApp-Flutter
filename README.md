@@ -1,6 +1,7 @@
-# the_movie_app
-<<<<<<< HEAD
-a personal project of an application that consumes the TMDB API where it is possible to consult movies and their details.
+# The Movie App
+
+A personal project of an application that consumes the TMDB API where it is possible to consult movies and their details, like overview, cast, videos and related movies.
+
 =======
 
 A new Flutter project.
