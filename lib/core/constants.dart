@@ -7,6 +7,8 @@ const String urlAlternative =
     'https://saltadorarchitects.com/images/team/01.jpg';
 const String urlPosterOriginal = 'https://image.tmdb.org/t/p/original';
 
+const String urlYouTubeVideos = 'https://www.youtube.com/watch?v=';
+
 Color mainColor = const Color(0xff0e1821);
 Color mainColor2 = const Color(0xff2f4253);
 Color secondColor = const Color(0xff182836);

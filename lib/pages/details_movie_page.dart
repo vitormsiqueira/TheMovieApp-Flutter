@@ -13,8 +13,8 @@ import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
 import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
-import 'package:blur/blur.dart';
 import 'package:the_movie_app/widgets/section_title.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MovieDetailPage extends StatefulWidget {
@@ -200,6 +200,24 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
+  launchYouTube(BuildContext context, String urlVideo) async {
+    String urlYT = urlVideo;
+    if (await canLaunch(urlYT)) {
+      await launch(urlYT);
+    } else {
+      return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            title: Text('Erro'),
+            content: Text('Não foi possivel abrir o video'),
+          );
+        },
+      );
+      // throw 'Não foi possível abrir o Video';
+    }
+  }
+
   // Precisa tratar o erro quando nao encontra o video pela key
   Widget _videoBuilder(_, int index) {
     final videosResult = _controllerVideo.videos[index];
@@ -222,8 +240,26 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     String videoThumb = 'https://i.ytimg.com/vi/$videoKey/mqdefault.jpg';
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: Container(
-        child: buildImagePoster(videoThumb, larg: 320),
+      child: GestureDetector(
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Container(
+              child: buildImagePoster(videoThumb, larg: 320),
+            ),
+            Container(
+              width: 320,
+              height: 230,
+              margin: const EdgeInsets.all(5.0),
+              child: const Icon(
+                Icons.play_circle_rounded,
+                color: Colors.white60,
+                size: 45,
+              ),
+            )
+          ],
+        ),
+        onTap: () => launchYouTube(context, '$urlYouTubeVideos$videoKey'),
       ),
     );
   }

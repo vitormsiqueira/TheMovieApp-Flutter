@@ -203,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildIndicator() {
     return AnimatedSmoothIndicator(
       activeIndex: _currentIndex,
-      count: 20,
+      count: 10,
       effect: const ExpandingDotsEffect(
         dotWidth: 10,
         dotHeight: 10,
