@@ -9,6 +9,7 @@ import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:the_movie_app/widgets/movie_card_now_playing.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -160,6 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 4),
         enlargeCenterPage: true,
+        disableCenter: true,
         enableInfiniteScroll: false,
         onPageChanged: (index, reason) => setState(() => _currentIndex = index),
       ),
@@ -201,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildIndicator() {
     return AnimatedSmoothIndicator(
       activeIndex: _currentIndex,
-      count: 10,
+      count: 20,
       effect: const ExpandingDotsEffect(
         dotWidth: 10,
         dotHeight: 10,

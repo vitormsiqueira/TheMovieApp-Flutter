@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:the_movie_app/controllers/movie_cast_controller.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/controllers/movie_detail_controller.dart';
@@ -13,6 +15,7 @@ import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:blur/blur.dart';
 import 'package:the_movie_app/widgets/section_title.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final int movieId;
@@ -28,6 +31,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   final _controllerCast = MovieCastController();
   final _controllerSimilar = MovieController();
   final _controllerVideo = MovieVideoController();
+
+  String myVideoId = 'bMEiXlPnT6s';
 
   @override
   void initState() {
@@ -45,9 +50,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
     await _controllerDetail.fetchMovieById(widget.movieId);
 
+    // Timer(const Duration(seconds: 2), () {
     setState(() {
       _controllerDetail.loading = false;
     });
+    // });
   }
 
   _initializeCast() async {
@@ -57,8 +64,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
     await _controllerCast.fetchCastMovieById(movieId: widget.movieId);
 
-    setState(() {
-      _controllerCast.loading = false;
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _controllerCast.loading = false;
+      });
     });
   }
 
@@ -134,6 +143,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       _buildCast(),
                       const SizedBox(height: 10),
                       _buildVideos(),
+                      // const SizedBox(height: 20),
+                      // _videoPlay(),
                       const SizedBox(height: 20),
                       _buildSimilar(),
                       const SizedBox(height: 10),
@@ -145,6 +156,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           ),
         ],
       ),
+    );
+  }
+
+  _videoPlay() {
+    // Initiate the Youtube player controller
+    final YoutubePlayerController _controllerYoutube = YoutubePlayerController(
+      initialVideoId: myVideoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+      ),
+    );
+
+    return YoutubePlayer(
+      controller: _controllerYoutube,
+      liveUIColor: Colors.amber,
+      showVideoProgressIndicator: true,
     );
   }
 
@@ -176,6 +204,21 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Widget _videoBuilder(_, int index) {
     final videosResult = _controllerVideo.videos[index];
     final videoKey = videosResult.key;
+
+    // // Initiate the Youtube player controller
+    // final YoutubePlayerController _controllerYoutube = YoutubePlayerController(
+    //   initialVideoId: videoKey ?? '',
+    //   flags: const YoutubePlayerFlags(
+    //     autoPlay: true,
+    //     mute: false,
+    //   ),
+    // );
+
+    // return YoutubePlayer(
+    //   controller: _controllerYoutube,
+    //   liveUIColor: Colors.amber,
+    // );
+
     String videoThumb = 'https://i.ytimg.com/vi/$videoKey/mqdefault.jpg';
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -269,16 +312,73 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         SingleChildScrollView(
           child: SizedBox(
             height: 160,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(5.0),
-              itemCount: _controllerCast.castCount,
-              itemBuilder: _buildCastMovie,
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-            ),
+            child: _controllerCast.loading
+                ? _buildCastMovieShimmer()
+                : ListView.builder(
+                    padding: const EdgeInsets.all(5.0),
+                    itemCount: _controllerCast.castCount,
+                    itemBuilder: _buildCastMovie,
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                  ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCastMovieShimmer() {
+    return ListView.builder(
+      itemCount: 5,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: secondColor,
+          highlightColor: mainColor2,
+          period: const Duration(milliseconds: 1500),
+          child: Column(
+            children: [
+              Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 7),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: 80,
+                child: Container(
+                  width: 70,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              SizedBox(
+                width: 80,
+                child: Container(
+                  width: 50,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -304,16 +404,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           margin: const EdgeInsets.symmetric(horizontal: 7),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
-            child: CachedNetworkImage(
-              placeholder: (context, url) => const SizedBox(
-                width: 60,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              imageUrl: urlImage,
+            child: Image.network(
+              urlImage,
               fit: BoxFit.cover,
             ),
           ),
@@ -374,6 +466,23 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
+  Widget _buildMovieTitleShimmer() {
+    return Shimmer.fromColors(
+      baseColor: secondColor,
+      highlightColor: mainColor2,
+      period: const Duration(milliseconds: 1500),
+      child: Container(
+        height: 230,
+        width: 150,
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+    );
+  }
+
   _movieTitle() {
     String? movieTitle = _controllerDetail.movieDetail?.title;
     int? movieYear = _controllerDetail.movieDetail?.releaseDate?.year;
@@ -391,16 +500,18 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(
-            width: posterWidth,
-            child: buildImagePoster(
-              '$urlPoster400$moviePoster',
-              margin: 0,
-              altura: posterHeight,
-              larg: posterWidth,
-              border: 8,
-            ),
-          ),
+          _controllerDetail.loading
+              ? _buildMovieTitleShimmer()
+              : SizedBox(
+                  width: posterWidth,
+                  child: buildImagePoster(
+                    '$urlPoster400$moviePoster',
+                    margin: 0,
+                    altura: posterHeight,
+                    larg: posterWidth,
+                    border: 8,
+                  ),
+                ),
           Container(
             width: titleWidth,
             padding: const EdgeInsets.all(10),
