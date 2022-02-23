@@ -12,8 +12,10 @@ import 'package:the_movie_app/controllers/movie_video_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/movie_genre_model.dart';
 import 'package:the_movie_app/utils/open_page.dart';
+import 'package:the_movie_app/widgets/build_image_cover.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
 import 'package:the_movie_app/widgets/section_title.dart';
+import 'package:the_movie_app/widgets/transition_shadow.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -116,6 +118,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       );
     }
 
+    String posterPath = _controllerDetail.movieDetail?.backdropPath ?? '';
+
     return Container(
       color: mainColor,
       width: MediaQuery.of(context).size.width,
@@ -123,7 +127,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         alignment: Alignment.topCenter,
         clipBehavior: Clip.none,
         children: [
-          _buildCover(),
+          buildCover(context, posterPath, urlPosterOriginal),
           Center(
             child: ListView(
               physics: const ScrollPhysics(),
@@ -131,7 +135,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
-                    _transitionShadow(),
+                    transitionShadow(),
                     _movieTitle(),
                   ],
                 ),
@@ -248,12 +252,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               child: buildImagePoster(videoThumb, larg: 320),
             ),
             Container(
-              width: 320,
-              height: 230,
-              margin: const EdgeInsets.all(5.0),
-              child: const Icon(
+              width: 45,
+              height: 45,
+              decoration: BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(
                 Icons.play_circle_rounded,
-                color: Colors.white60,
+                color: mainColor2,
                 size: 45,
               ),
             )
@@ -267,7 +274,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   _buildOverview() {
     String? movieOverview = _controllerDetail.movieDetail?.overview;
     return Container(
-      color: mainColor,
+      // color: mainColor,
       padding: const EdgeInsets.all(20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -486,22 +493,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  _buildCover() {
-    String? posterPath = _controllerDetail.movieDetail?.backdropPath;
-    return SizedBox(
-      height: 420,
-      child: CachedNetworkImage(
-        placeholder: (context, url) => const Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-          ),
-        ),
-        fit: BoxFit.cover,
-        imageUrl: '$urlPosterOriginal$posterPath',
-      ),
-    );
-  }
-
   Widget _buildMovieTitleShimmer() {
     return Shimmer.fromColors(
       baseColor: secondColor,
@@ -613,25 +604,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  _transitionShadow() {
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            mainColor,
-            Colors.transparent,
-            Colors.transparent,
-            mainColor
-          ],
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          stops: [0.25, 1, 0, 0],
-        ),
       ),
     );
   }
