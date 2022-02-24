@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          buildBottomNavigation(),
+          // buildBottomNavigation(),
         ],
       ),
     );
@@ -160,7 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 4),
         enlargeCenterPage: true,
-        disableCenter: true,
         enableInfiniteScroll: false,
         onPageChanged: (index, reason) => setState(() => _currentIndex = index),
       ),
@@ -207,62 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
         dotWidth: 10,
         dotHeight: 10,
         activeDotColor: Colors.red,
-      ),
-    );
-  }
-
-  Widget buildBottomNavigation() {
-    return Align(
-      alignment: FractionalOffset.bottomCenter,
-      //this is very important, without it the whole screen will be blurred
-      child: Container(
-        height: 100,
-        padding: const EdgeInsets.all(15.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24.0),
-          //I'm using BackdropFilter for the blurring effect
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 10.0,
-              sigmaY: 10.0,
-            ),
-            child: Opacity(
-              opacity: 0.6,
-              child: BottomNavigationBar(
-                currentIndex: 0,
-                onTap: (int index) {
-                  setState(() {
-                    currentTab = index;
-                  });
-                },
-                type: BottomNavigationBarType.fixed,
-                unselectedItemColor: Colors.white,
-                selectedItemColor: Colors.white,
-                selectedFontSize: 12,
-                unselectedFontSize: 12,
-                backgroundColor: secondColor,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: "Inicio",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.search_rounded),
-                    label: "Pesquisar",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.list),
-                    label: "Minha Lista",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline),
-                    label: "Meu Perfil",
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

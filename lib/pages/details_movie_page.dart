@@ -517,7 +517,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     int? movieRuntime = _controllerDetail.movieDetail?.runtime;
     double? movieRate = _controllerDetail.movieDetail?.voteAverage;
     String moviePoster = _controllerDetail.movieDetail?.posterPath ?? '';
-    double posterWidth = 140;
+    double posterWidth = 150;
     double posterHeight = 200;
     double titleWidth = MediaQuery.of(context).size.width - posterWidth - 40;
 

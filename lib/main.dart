@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_app/pages/home.dart';
 import 'package:the_movie_app/pages/home_page.dart';
 
 void main() {
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: "The Movie App"),
+      home: const Home(),
+      // home: const Home(),
     );
   }
 }
