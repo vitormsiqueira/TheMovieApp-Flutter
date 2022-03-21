@@ -2,10 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:the_movie_app/core/api.dart';
 import 'package:the_movie_app/errors/movie_error.dart';
-import 'package:the_movie_app/models/movie_cast_response_model.dart';
+import 'package:the_movie_app/models/movie_cast_model.dart';
+import 'package:the_movie_app/models/movie_cast_response.dart';
 import 'package:the_movie_app/models/movie_details_model.dart';
 import 'package:the_movie_app/models/movie_response_model.dart';
 import 'package:the_movie_app/models/movie_video_response.dart';
+import 'package:the_movie_app/models/person_movie_response.dart';
 import 'package:the_movie_app/models/person_model.dart';
 
 class Repository {
@@ -56,11 +58,31 @@ class Repository {
     }
   }
 
-  Future<Either<MovieError, MovieCastResponseModel>> fetchCastMovieById(
-      int id) async {
+  Future<Either<MovieError, MovieCastResponse>> fetchCastMovieById(
+      int movieId) async {
     try {
-      final response = await _dio.get('/movie/$id/credits?&language=pt-BR');
-      final model = MovieCastResponseModel.fromMap(response.data);
+      final response =
+          await _dio.get('/movie/$movieId/credits?&language=pt-BR');
+      final model = MovieCastResponse.fromMap(response.data);
+      return Right(model);
+    } on DioError catch (error) {
+      if (error.response != null) {
+        return Left(
+            MovieRepositoryError(error.response!.data['status_message']));
+      } else {
+        return Left(MovieRepositoryError(kServerError));
+      }
+    } on Exception catch (error) {
+      return Left(MovieRepositoryError(error.toString()));
+    }
+  }
+
+  Future<Either<MovieError, PersonMovieResponse>> fetchPersonMovieById(
+      int idPerson) async {
+    try {
+      final response =
+          await _dio.get('/person/$idPerson/movie_credits?&language=pt-BR');
+      final model = PersonMovieResponse.fromMap(response.data);
       return Right(model);
     } on DioError catch (error) {
       if (error.response != null) {

@@ -34,8 +34,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   final _controllerSimilar = MovieController();
   final _controllerVideo = MovieVideoController();
 
-  String myVideoId = 'bMEiXlPnT6s';
-
   @override
   void initState() {
     super.initState();
@@ -163,22 +161,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  _videoPlay() {
-    // Initiate the Youtube player controller
-    final YoutubePlayerController _controllerYoutube = YoutubePlayerController(
-      initialVideoId: myVideoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: true,
-        mute: false,
-      ),
-    );
+  // _videoPlay() {
+  //   // Initiate the Youtube player controller
+  //   final YoutubePlayerController _controllerYoutube = YoutubePlayerController(
+  //     initialVideoId: myVideoId,
+  //     flags: const YoutubePlayerFlags(
+  //       autoPlay: true,
+  //       mute: false,
+  //     ),
+  //   );
 
-    return YoutubePlayer(
-      controller: _controllerYoutube,
-      liveUIColor: Colors.amber,
-      showVideoProgressIndicator: true,
-    );
-  }
+  //   return YoutubePlayer(
+  //     controller: _controllerYoutube,
+  //     liveUIColor: Colors.amber,
+  //     showVideoProgressIndicator: true,
+  //   );
+  // }
 
   _buildVideos() {
     return SingleChildScrollView(
@@ -314,7 +312,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         SingleChildScrollView(
           child: SizedBox(
-            height: 250,
+            height: 200,
             child: ListView.builder(
               padding: const EdgeInsets.all(5.0),
               itemCount: _controllerSimilar.moviesCount,
@@ -518,7 +516,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     double? movieRate = _controllerDetail.movieDetail?.voteAverage;
     String moviePoster = _controllerDetail.movieDetail?.posterPath ?? '';
     double posterWidth = 150;
-    double posterHeight = 200;
+    double posterHeight = 210;
     double titleWidth = MediaQuery.of(context).size.width - posterWidth - 40;
 
     return Padding(

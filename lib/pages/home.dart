@@ -42,10 +42,10 @@ class _HomeState extends State<Home> {
       alignment: FractionalOffset.bottomCenter,
       //this is very important, without it the whole screen will be blurred
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: mainColor2,
+              color: Colors.white24,
               width: .5,
             ),
           ),
@@ -69,11 +69,11 @@ class _HomeState extends State<Home> {
                   });
                 },
                 type: BottomNavigationBarType.fixed,
-                unselectedItemColor: Colors.white,
-                selectedItemColor: Colors.white,
+                unselectedItemColor: Colors.white38,
+                selectedItemColor: greenSelect,
                 selectedFontSize: 9,
                 unselectedFontSize: 9,
-                backgroundColor: secondColor,
+                backgroundColor: mainColor,
                 items: const [
                   BottomNavigationBarItem(
                     icon: Icon(

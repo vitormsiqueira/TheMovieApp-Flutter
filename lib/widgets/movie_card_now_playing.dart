@@ -22,30 +22,8 @@ class MovieCardNowPlaying extends StatefulWidget {
 }
 
 class _MovieCardNowPlayingState extends State<MovieCardNowPlaying> {
-  PaletteColor? myColor;
-
-  void initiState() {
-    super.initState();
-    myColor = PaletteColor(Colors.green, 2);
-    _updatePalettes();
-  }
-
-  _updatePalettes() async {
-    final PaletteGenerator generator = await PaletteGenerator.fromImageProvider(
-      NetworkImage(widget.posterPath ?? urlAlternative),
-    );
-
-    myColor = (generator.dominantColor ?? PaletteColor(Colors.red, 2));
-
-    // print('color');
-    // print(myColor);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // print('color');
-    // print(myColor);
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -53,40 +31,23 @@ class _MovieCardNowPlayingState extends State<MovieCardNowPlaying> {
         child: Stack(
           alignment: AlignmentDirectional.bottomStart,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Colors.white,
-                ),
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    offset: const Offset(0, 0),
-                    blurRadius: 5,
-                    color: Colors.white.withOpacity(0.5),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14.0),
-                  child: widget.posterPath != null
-                      ? CachedNetworkImage(
-                          height: 220,
-                          placeholder: (context, _) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white60,
-                              ),
-                            );
-                          },
-                          imageUrl: '$urlPoster780${widget.posterPath}',
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          'lib/assets/images/backdrop_alternative.png'),
-                ),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: widget.posterPath != null
+                    ? CachedNetworkImage(
+                        height: 450,
+                        placeholder: (context, _) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white60,
+                            ),
+                          );
+                        },
+                        imageUrl: '$urlPoster780${widget.posterPath}',
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset('lib/assets/images/backdrop_alternative.png'),
               ),
             ),
             Column(

@@ -1,14 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:the_movie_app/errors/movie_error.dart';
 import 'package:the_movie_app/models/movie_cast_model.dart';
-import 'package:the_movie_app/models/movie_cast_response_model.dart';
-import 'package:the_movie_app/models/movie_model.dart';
+import 'package:the_movie_app/models/movie_cast_response.dart';
 import 'package:the_movie_app/repositories/movies_repository.dart';
 
 class MovieCastController {
   final _repository = Repository();
 
-  MovieCastResponseModel? movieCastResponseModel;
+  MovieCastResponse? movieCastResponseModel;
   MovieError? movieError;
   bool loading = true;
 
@@ -16,7 +15,7 @@ class MovieCastController {
       movieCastResponseModel?.cast ?? <MovieCastModel>[];
   int get castCount => cast.length;
 
-  Future<Either<MovieError, MovieCastResponseModel>> fetchCastMovieById(
+  Future<Either<MovieError, MovieCastResponse>> fetchCastMovieById(
       {required int movieId}) async {
     movieError;
     final result = await _repository.fetchCastMovieById(movieId);

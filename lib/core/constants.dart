@@ -9,7 +9,9 @@ const String urlPosterOriginal = 'https://image.tmdb.org/t/p/original';
 
 const String urlYouTubeVideos = 'https://www.youtube.com/watch?v=';
 
-Color mainColor = const Color(0xff0e1821);
+Color mainColor = const Color(0xff1C1C1D);
 Color mainColor2 = const Color(0xff2f4253);
 Color secondColor = const Color(0xff182836);
 Color shadowColor = const Color(0xff4fd5f7);
+
+Color greenSelect = const Color(0xff25D366);

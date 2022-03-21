@@ -114,9 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 buildSectionTitle("Em Cartaz"),
                 buildCarouselMovieCard(),
 
-                const SizedBox(height: 30),
+                // const SizedBox(height: 30),
 
-                buildIndicator(),
+                // buildIndicator(),
 
                 const SizedBox(height: 30),
 
@@ -157,7 +157,9 @@ class _MyHomePageState extends State<MyHomePage> {
       itemBuilder: _buildNowPlayingMovieCard,
       options: CarouselOptions(
         height: 220,
+        viewportFraction: 0.75,
         autoPlay: true,
+        disableCenter: true,
         autoPlayInterval: const Duration(seconds: 4),
         enlargeCenterPage: true,
         enableInfiniteScroll: false,
@@ -168,10 +170,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildListViewMovieCard(MovieController _mc) {
     return SizedBox(
-      height: 230,
-      width: 500,
+      height: 190,
       child: ListView.builder(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(0.0),
         itemCount: _mc.moviesCount,
         itemBuilder: (context, index) => _itemBuilder(context, index, _mc),
         scrollDirection: Axis.horizontal,
@@ -224,8 +225,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final movie = _movie.movies[index];
     final posterPath = movie.posterPath;
     final urlPoster = '$urlPoster780$posterPath';
+    // print('old');
+    // print('movie-poster-${movie.id.toString()}');
     return GestureDetector(
-      child: buildImagePoster(urlPoster),
+      child: Hero(
+        tag: 'movie-poster-${movie.id.toString()}',
+        child: buildImagePoster(urlPoster, movieId: movie.id.toString()),
+      ),
       onTap: () => openDetailPage(movie.id, context),
     );
   }

@@ -1,13 +1,18 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:the_movie_app/controllers/movie_controller.dart';
 import 'package:the_movie_app/controllers/person_detail_controller.dart';
+import 'package:the_movie_app/controllers/person_movie_controller.dart';
 import 'package:the_movie_app/core/constants.dart';
 import 'package:the_movie_app/models/person_model.dart';
+import 'package:the_movie_app/utils/appbar.dart';
 import 'package:the_movie_app/utils/open_page.dart';
 import 'package:the_movie_app/widgets/build_image_cover.dart';
 import 'package:the_movie_app/widgets/build_image_poster.dart';
+import 'package:the_movie_app/widgets/description_text.dart';
 import 'package:the_movie_app/widgets/section_title.dart';
 import 'package:the_movie_app/widgets/transition_shadow.dart';
 
@@ -22,6 +27,13 @@ class DetailPersonPage extends StatefulWidget {
 class _DetailPersonPageState extends State<DetailPersonPage> {
   final _controllerPerson = PersonDetailController();
   final _controllerMovie = MovieController();
+  final _controllerPersonMovie = PersonMovieController();
+
+  final _scrollController = ScrollController();
+  final kExpandedHeight = 400.0;
+  final kToolbarHeight = 55.0;
+
+  bool isHeart = false;
 
   double largImage = 150;
   double marginImage = 20;
@@ -31,7 +43,12 @@ class _DetailPersonPageState extends State<DetailPersonPage> {
   void initState() {
     super.initState();
     _initializePerson();
-    // _initializeMovie();
+    _initializePersonMovie();
+    _initializeScroll();
+  }
+
+  _initializeScroll() async {
+    _scrollController.addListener(() => setState(() {}));
   }
 
   _initializePerson() async {
@@ -46,18 +63,15 @@ class _DetailPersonPageState extends State<DetailPersonPage> {
     });
   }
 
-  _initializeMovie() async {
+  _initializePersonMovie() async {
     setState(() {
-      _controllerMovie.loading = true;
+      _controllerPersonMovie.loading = true;
     });
 
-    await _controllerMovie.fetchMovies(
-      idPerson: widget.personId,
-      responseType: 2,
-    );
+    await _controllerPersonMovie.fetchPersonMovieById(widget.personId);
 
     setState(() {
-      _controllerMovie.loading = false;
+      _controllerPersonMovie.loading = false;
     });
   }
 
@@ -74,6 +88,7 @@ class _DetailPersonPageState extends State<DetailPersonPage> {
   }
 
   Widget _buildBodyPersonDetail() {
+    print(widget.personId);
     final person = _controllerPerson.personDetail;
     if (_controllerPerson.loading) {
       return Container(
@@ -88,129 +103,159 @@ class _DetailPersonPageState extends State<DetailPersonPage> {
     }
 
     final personPath = person?.profilePath;
+    final personBiography = person?.biography;
     final pathImage = personPath ?? urlAlternative;
-    String personName = _controllerPerson.personDetail?.name ?? '';
-    double? personPopularity = _controllerPerson.personDetail?.popularity;
-    String? personKnowDepartment =
-        _controllerPerson.personDetail?.knownForDepartment ?? '';
+    final personPlaceOfBirth = person?.placeOfBirth ?? '';
+    final personBirthday = person?.birthday ?? DateTime.now();
+    final personKnowFor = person?.knownForDepartment;
+    final personPopularity = person?.popularity;
+    String personName = person?.name ?? '';
+    _controllerPerson.personDetail?.knownForDepartment ?? '';
 
-    return Container(
-      color: mainColor,
-      width: MediaQuery.of(context).size.width,
-      child: Stack(
-        children: [
-          SizedBox(
-            height: 350,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(
-                  '$urlPosterOriginal$pathImage',
-                  fit: BoxFit.cover,
-                ),
-                ClipRRect(
-                  // Clip it cleanly.
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      color: Colors.blueGrey.withOpacity(0.4),
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                ),
-                // transitionShadow(altura: 600),
-              ],
-            ),
-          ),
-          Center(
-            child: ListView(
-              physics: const ScrollPhysics(),
-              children: [
-                Stack(
-                  alignment: Alignment.bottomCenter,
+    final today = DateTime.now();
+    final age = today.difference(personBirthday).inDays ~/ 365;
+
+    return CustomScrollView(
+      // Let show blank space when scroll page down
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+
+      slivers: <Widget>[
+        MySliverAppBar(
+          personName,
+          '$urlPoster400$pathImage',
+          kExpandedHeight,
+          isHeart,
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
+              Container(
+                color: mainColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          height: 220,
-                          color: Colors.transparent,
-                        ),
-                        Container(
-                          height: 180,
-                          decoration: BoxDecoration(
-                            color: mainColor,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              topRight: Radius.circular(30),
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 20),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     const SizedBox(width: 10),
+                    //     _buildInfo(
+                    //       age.toString(),
+                    //       'Idade',
+                    //     ),
+                    //     _buildInfo(
+                    //       personKnowFor.toString(),
+                    //       'Conhecido(a) como',
+                    //     ),
+                    //     _buildInfo(
+                    //       personPopularity.toString(),
+                    //       'Popularidade',
+                    //     ),
+                    //   ],
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: buildSectionTitle('Biografia'),
                     ),
-                    Column(
-                      children: [
-                        buildImagePoster(
-                          '$urlPoster400$pathImage',
-                          larg: 150,
+                    DescriptionTextWidget(text: personBiography ?? ''),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: buildSectionTitle('Conhecido(a) por'),
+                    ),
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(5.0),
+                          itemCount: _controllerPersonMovie.castCount,
+                          itemBuilder: _buildKnownForCast,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10),
-                          child: Text(
-                            personName,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: buildSectionTitle('Conhecido(a) por'),
+                    ),
+                    SingleChildScrollView(
+                      child: SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(5.0),
+                          itemCount: _controllerPersonMovie.crewCount,
+                          itemBuilder: _buildKnownForCrew,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.star_border_purple500_rounded,
-                              color: Colors.white,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: Text(
-                                personPopularity.toString(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10),
-                          child: Text(
-                            personKnowDepartment,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     )
                   ],
                 ),
-                // Container(
-                //   height: 100,
-                //   color: mainColor,
-                // ),
-              ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKnownForCast(_, index) {
+    final similar = _controllerPersonMovie.cast[index];
+    final similarPath = similar.posterPath;
+    final urlPoster = '$urlPoster400$similarPath';
+    final pathImage = similarPath == null ? urlAlternative : urlPoster;
+    return GestureDetector(
+      child: buildImagePoster(pathImage),
+      onTap: () => openDetailPage(similar.id, context),
+    );
+  }
+
+  Widget _buildKnownForCrew(_, index) {
+    final similar = _controllerPersonMovie.crew[index];
+    final similarPath = similar.posterPath;
+    final urlPoster = '$urlPoster400$similarPath';
+    final pathImage = similarPath == null ? urlAlternative : urlPoster;
+    return GestureDetector(
+      child: buildImagePoster(pathImage),
+      onTap: () => openDetailPage(similar.id, context),
+    );
+  }
+
+  _buildInfo(String text, String label) {
+    return SizedBox(
+      width: 90,
+      height: 90,
+      // color: Colors.green,
+      child: Column(
+        children: [
+          Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
             ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.6),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
-
   // _buildImage(BuildContext context, PersonDetail? _person) {
   //   final personPath = _person?.profilePath;
   //   final pathImage = personPath ?? urlAlternative;
